@@ -34,18 +34,19 @@ namespace UdpBroadcastCapture
                     string message = Encoding.ASCII.GetString(datagramReceived, 0, datagramReceived.Length);
                     Console.WriteLine("Receives {0} bytes from {1} port {2} message {3}", datagramReceived.Length,
                         remoteEndPoint.Address, remoteEndPoint.Port, message);
+                    string temptosend = message;
+                    Console.WriteLine(temptosend);
+                    //string[] SplittedMessage = message.Split();
 
-                    string[] SplittedMessage = message.Split();
-
-                    Console.WriteLine("####");
-                    foreach (string s in SplittedMessage)
-                    {
-                        Console.WriteLine(s);
-                    }
-                    Console.WriteLine("####");
-                    string temptosend = SplittedMessage[1];
+                    //Console.WriteLine("####");
+                    //foreach (string s in SplittedMessage)
+                    //{
+                    //    Console.WriteLine(s);
+                    //}
+                    //Console.WriteLine("####");
+                    //string temptosend = SplittedMessage[1];
                     
-                    InsertCustomer(new Temperatur(double.Parse(temptosend)));
+                    InsertTemp(new TemperaturClass(double.Parse(temptosend)));
 
                     Thread.Sleep(15000);
                         
@@ -57,17 +58,20 @@ namespace UdpBroadcastCapture
         }
 
 
-        private static async Task InsertCustomer(Temperatur t)
-                {
-                    string data = JsonConvert.SerializeObject(t);
-                    byte[] buffer = Encoding.UTF8.GetBytes(data);
-                    var byteContent = new ByteArrayContent(buffer);
-                    byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                    using (HttpClient client = new HttpClient())
-                    {
-                        await client.PostAsync("http://coolscreenwebpage.azurewebsites.net/Temperatur", byteContent);
-                    }
-                }
+        private static async Task InsertTemp(TemperaturClass t)
+        {
+            string data = JsonConvert.SerializeObject(t);
+            byte[] buffer = Encoding.UTF8.GetBytes(data);
+            var byteContent = new ByteArrayContent(buffer);
+            byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            
+            using (HttpClient client = new HttpClient())
+            {
+//                await client.PostAsync("http://coolscreenwebservice.azurewebsites.net/Service1.svc/Temperatur", byteContent);
+                await client.PostAsync("http://localhost:36917/Service1.svc/Temperatur", byteContent);
+                
+            }
+        }
     
             
         
